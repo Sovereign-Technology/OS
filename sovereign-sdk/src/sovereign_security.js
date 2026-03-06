@@ -560,7 +560,15 @@ window.SovereignKernelBridge = (() => {
     return;
   }
   try {
-    const reg = await navigator.serviceWorker.register('./genesis_sw.js', { scope: './' });
+    // Use the base URL pre-computed by the HTML page (window.__SOVEREIGN_SW_BASE__).
+    // Falls back to a URL() computation which handles index.html and trailing-slash cases.
+    // The regex-only approach breaks when a server omits the trailing slash on directory URLs.
+    const _swBase = window.__SOVEREIGN_SW_BASE__ || (() => {
+      const h = location.href;
+      if (/\/index\.html/.test(h)) return h.replace(/\/index\.html.*$/, '/');
+      return h.endsWith('/') ? h : h + '/';
+    })();
+    const reg = await navigator.serviceWorker.register(_swBase + 'genesis_sw.js', { scope: _swBase });
 
     const fire = () => window.dispatchEvent(new CustomEvent('sovereign:sw:ready', { detail: { reg } }));
 

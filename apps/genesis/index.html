@@ -818,7 +818,17 @@
   <div id="toast"></div>
 
   <!-- ══════════════════════════════════════════════════════════════════ -->
-  <script src="../../sovereign-sdk/src/sovereign_shamir.js"></script>
+  <script>
+// Compute the correct SW scope before sovereign_security.js loads.
+// Handles: /apps/genesis/index.html, /apps/genesis/, /apps/genesis (no trailing slash).
+window.__SOVEREIGN_SW_BASE__ = (function () {
+  var h = location.href;
+  if (/\/index\.html/.test(h)) return h.replace(/\/index\.html.*$/, '/');
+  if (h.endsWith('/')) return h;
+  return h + '/';  // directory URL served without trailing slash
+}());
+</script>
+<script src="../../sovereign-sdk/src/sovereign_shamir.js"></script>
 <script src="../../sovereign-sdk/src/sovereign_security.js"></script>
   <script src="../../sovereign-kernel/src/sovereign_fsm.js"></script>
   <script src="../../sovereign-runtime/src/transport.js"></script>
@@ -1997,7 +2007,12 @@
   if ('serviceWorker' in navigator && location.protocol !== 'file:' && location.origin !== 'null') {
     (async () => {
       try {
-        const reg = await navigator.serviceWorker.register('./genesis_sw.js', { scope: './' });
+        const _swBase = window.__SOVEREIGN_SW_BASE__ || (() => {
+          const h = location.href;
+          if (/\/index\.html/.test(h)) return h.replace(/\/index\.html.*$/, '/');
+          return h.endsWith('/') ? h : h + '/';
+        })();
+        const reg = await navigator.serviceWorker.register(_swBase + 'genesis_sw.js', { scope: _swBase });
         // Build the SW bridge — replaces the in-page shim once SW is confirmed active
         function _installSwBridge(sw) {
           window.SovereignKernelBridge = {

@@ -1,4 +1,14 @@
 <html lang="en"><head>
+<script>
+// Compute the correct SW scope before sovereign_security.js loads.
+// Handles: /apps/genesis/index.html, /apps/genesis/, /apps/genesis (no trailing slash).
+window.__SOVEREIGN_SW_BASE__ = (function () {
+  var h = location.href;
+  if (/\/index\.html/.test(h)) return h.replace(/\/index\.html.*$/, '/');
+  if (h.endsWith('/')) return h;
+  return h + '/';  // directory URL served without trailing slash
+}());
+</script>
 <script src="../../sovereign-sdk/src/sovereign_shamir.js"></script>
 <script src="../../sovereign-sdk/src/sovereign_security.js"></script>
 <meta charset="UTF-8">
