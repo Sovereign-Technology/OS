@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⬡ SOVEREIGN OS</title>
+  <meta name="description" content="Self-sovereign, peer-to-peer operating environment. No servers. No accounts. No surveillance." />
+  <style>
+    :root {
+      --bg-void:    #030306;
+      --bg-surface: #070a0f;
+      --bg-raised:  #0c1018;
+      --bg-panel:   #101620;
+      --green:      #00e87c;
+      --cyan:       #00c8ff;
+      --amber:      #ffb020;
+      --red:        #ff4040;
+      --purple:     #c060ff;
+      --teal:       #00d4aa;
+      --text:       #dce8f4;
+      --muted:      #4a5e72;
+      --dim:        #243040;
+      --border:     rgba(0,232,124,0.10);
+      --border-mid: rgba(0,232,124,0.20);
+      --mono: "ui-monospace","Cascadia Code","Menlo","Consolas",monospace;
+      --sans: "system-ui","-apple-system","BlinkMacSystemFont","Segoe UI",sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-void);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Scan-line */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+      );
+      pointer-events: none;
+      z-index: 9000;
+    }
+
+    /* ── TOPBAR ─────────────────────────────────────────────────────── */
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(3,3,6,0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      z-index: 500;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .topbar-logo svg {
+      width: 22px; height: 22px;
+      filter: drop-shadow(0 0 5px rgba(0,232,124,0.5));
+    }
+    .topbar-wordmark {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: .1em;
+    }
+    .topbar-version {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: .15em;
+      padding: 2px 5px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+    }
+
+    .topbar-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .topbar-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: .08em;
+      transition: color .15s;
+    }
+    .topbar-links a:hover { color: var(--text); }
+
+    /* ── HERO ───────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Radial glow behind hero */
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(0,232,124,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-hex {
+      width: 80px; height: 80px;
+      margin-bottom: 32px;
+      filter: drop-shadow(0 0 28px rgba(0,232,124,0.4));
+      animation: hero-pulse 3s ease-in-out infinite;
+    }
+    @keyframes hero-pulse {
+      0%,100% { filter: drop-shadow(0 0 28px rgba(0,232,124,0.3)); }
+      50%      { filter: drop-shadow(0 0 44px rgba(0,232,124,0.6)); }
+    }
+
+    .hero-title {
+      font-family: var(--sans);
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+    .hero-title span { color: var(--green); }
+
+    .hero-tagline {
+      font-size: clamp(11px, 1.5vw, 14px);
+      color: var(--muted);
+      letter-spacing: .08em;
+      margin-bottom: 40px;
+      max-width: 520px;
+    }
+
+    .hero-pillars {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .pillar {
+      font-size: 10px;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--muted);
+      letter-spacing: .1em;
+      background: rgba(0,232,124,0.04);
+    }
+    .pillar span { color: var(--green); margin-right: 5px; }
+
+    /* CTA buttons */
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--green);
+      color: #020804;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all .15s;
+      box-shadow: 0 0 20px rgba(0,232,124,0.2);
+    }
+    .btn-primary:hover {
+      background: #00ff8a;
+      box-shadow: 0 0 30px rgba(0,232,124,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: transparent;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-decoration: none;
+      border: 1px solid rgba(0,200,255,0.3);
+      border-radius: 4px;
+      transition: all .15s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.06);
+      transform: translateY(-1px);
+    }
+
+    /* ── SECTION WRAPPER ────────────────────────────────────────────── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      letter-spacing: .25em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--sans);
+      font-size: clamp(18px, 3vw, 26px);
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: .04em;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 48px;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    /* ── APPS GRID ──────────────────────────────────────────────────── */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .app-card {
+      display: block;
+      text-decoration: none;
+      background: var(--bg-surface);
+      padding: 28px 28px 24px;
+      transition: background .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-accent, var(--green));
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .app-card:hover { background: var(--bg-raised); }
+    .app-card:hover::before { opacity: 1; }
+
+    .app-card.genesis  { --card-accent: var(--green);  }
+    .app-card.forge    { --card-accent: var(--cyan);   }
+
+    .app-icon {
+      font-size: 22px;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .app-name {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: .04em;
+    }
+    .app-subtitle {
+      font-size: 9px;
+      letter-spacing: .15em;
+      color: var(--card-accent, var(--green));
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .app-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .app-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .app-features li {
+      font-size: 10px;
+      color: var(--dim);
+      padding-left: 14px;
+      position: relative;
+    }
+    .app-features li::before {
+      content: '·';
+      position: absolute;
+      left: 4px;
+      color: var(--card-accent, var(--green));
+    }
+    .app-launch {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 10px;
+      color: var(--card-accent, var(--green));
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .app-launch::after { content: '→'; }
+
+    /* ── REPOS GRID ─────────────────────────────────────────────────── */
+    .repos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .repo-card {
+      background: var(--bg-surface);
+      padding: 20px;
+      text-decoration: none;
+      display: block;
+      transition: background .15s;
+    }
+    .repo-card:hover { background: var(--bg-raised); }
+
+    .repo-tag {
+      display: inline-block;
+      font-size: 8px;
+      letter-spacing: .15em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .repo-tag.core     { background: rgba(0,232,124,.12); color: var(--green); }
+    .repo-tag.runtime  { background: rgba(0,200,255,.10); color: var(--cyan); }
+    .repo-tag.social   { background: rgba(192,96,255,.10); color: var(--purple); }
+    .repo-tag.finance  { background: rgba(255,176,32,.10); color: var(--amber); }
+    .repo-tag.security { background: rgba(255,64,64,.10); color: var(--red); }
+    .repo-tag.ai       { background: rgba(0,212,170,.10); color: var(--teal); }
+    .repo-tag.docs     { background: rgba(74,94,114,.15); color: var(--muted); }
+
+    .repo-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: .04em;
+    }
+    .repo-desc {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── STACK DIAGRAM ──────────────────────────────────────────────── */
+    .stack-diagram {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      font-size: 11px;
+    }
+
+    .stack-layer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .stack-layer:last-child { border-bottom: none; padding-bottom: 0; }
+    .stack-layer:first-child { padding-top: 0; }
+
+    .stack-number {
+      font-size: 9px;
+      color: var(--dim);
+      width: 20px;
+      flex-shrink: 0;
+      letter-spacing: .1em;
+    }
+    .stack-badge {
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      width: 120px;
+      flex-shrink: 0;
+      text-align: center;
+      letter-spacing: .06em;
+    }
+    .stack-modules {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    .stack-chip {
+      font-size: 9px;
+      padding: 2px 8px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .stack-arrow {
+      font-size: 8px;
+      color: var(--dim);
+    }
+
+    /* ── QUICK START ────────────────────────────────────────────────── */
+    .qs-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .qs-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px 24px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .qs-step:last-child { border-bottom: none; }
+    .qs-num {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--green);
+      flex-shrink: 0;
+      width: 28px;
+      line-height: 1.4;
+      opacity: .5;
+    }
+    .qs-step-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .qs-step-body {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    code {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: rgba(0,232,124,0.08);
+      color: var(--green);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .footer-brand svg { width:16px; height:16px; opacity:.5; }
+    .footer-tagline { font-size: 10px; color: var(--dim); letter-spacing: .06em; }
+    .footer-links { display:flex; gap:16px; }
+    .footer-links a { color:var(--dim); text-decoration:none; font-size:10px; letter-spacing:.06em; }
+    .footer-links a:hover { color:var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ── TOPBAR ─────────────────────────────────────────────────────── -->
+  <nav id="topbar">
+    <a class="topbar-logo" href="/">
+      <svg viewBox="0 0 52 60" fill="none">
+        <path d="M26 2 L50 15 L50 45 L26 58 L2 45 L2 15 Z" stroke="#00e87c" stroke-width="1.5" fill="none" opacity=".4"/>
+        <path d="M26 10 L44 20 L44 40 L26 50 L8 40 L8 20 Z" stroke="#00e87c" stroke-width="1" fill="none" opacity=".6"/>
+        <path d="M26 18 L38 25 L38 35 L26 42 L14 35 L14 25 Z" fill="rgba(0,232,124,.2)" stroke="#00e87c" stroke-width="1.5"/>
+      </svg>
+      <span class="topbar-wordmark">SOVEREIGN</span>
+      <span class="topbar-version">v7.0</span>
+    </a>
+    <div class="topbar-links">
+      <a href="#apps">Apps</a>
+      <a href="#repos">Repos</a>
+      <a href="#stack">Stack</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="sovereign-docs/README.md">Docs</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ───────────────────────────────────────────────────────── -->
+  <section id="hero">
+    <svg class="hero-hex" viewBox="0 0 52 60" fill="none">
+      <path d="M26 2 L50 15 L50 45 L26 58 L2 45 L2 15 Z" stroke="#00e87c" stroke-width="1" fill="none" opacity=".3"/>
+      <path d="M26 7 L47 19 L47 41 L26 53 L5 41 L5 19 Z" stroke="#00e87c" stroke-width="1" fill="none" opacity=".5"/>
+      <path d="M26 13 L42 22 L42 38 L26 47 L10 38 L10 22 Z" stroke="#00e87c" stroke-width="1" fill="none" opacity=".7"/>
+      <path d="M26 19 L37 25.5 L37 34.5 L26 41 L15 34.5 L15 25.5 Z" fill="rgba(0,232,124,.2)" stroke="#00e87c" stroke-width="1.5"/>
+    </svg>
+
+    <div class="hero-title">
+      <span>SOVEREIGN</span> OS
+    </div>
+    <div class="hero-tagline">
+      A self-sovereign, peer-to-peer operating environment<br>
+      that runs entirely in your browser.
+    </div>
+
+    <div class="hero-pillars">
+      <div class="pillar"><span>⬡</span> No servers</div>
+      <div class="pillar"><span>⬡</span> No accounts</div>
+      <div class="pillar"><span>⬡</span> No surveillance</div>
+      <div class="pillar"><span>⬡</span> Your keys, always</div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="apps/genesis/index.html" class="btn-primary">
+        ⬡ Launch Genesis Node
+      </a>
+      <a href="apps/forge/index.html" class="btn-secondary">
+        ◈ Open Forge
+      </a>
+    </div>
+  </section>
+
+  <!-- ── APPS ───────────────────────────────────────────────────────── -->
+  <section id="apps" class="section">
+    <div class="section-label">Applications</div>
+    <div class="section-title">Two apps. One stack.</div>
+    <div class="section-desc">
+      Everything runs from these two entry points. Genesis is the OS core.
+      Forge is the creator and social layer. Both share the same sovereign stack.
+    </div>
+
+    <div class="apps-grid">
+      <a href="apps/genesis/index.html" class="app-card genesis">
+        <span class="app-icon">⬡</span>
+        <div class="app-name">Genesis Node</div>
+        <div class="app-subtitle">apps/genesis</div>
+        <div class="app-desc">
+          The primary OS entry point. Bootstraps your identity, connects to the mesh,
+          and provides the full network dashboard — peers, messages, and the live
+          network map.
+        </div>
+        <ul class="app-features">
+          <li>Identity creation and vault management</li>
+          <li>Live peer network and mesh status</li>
+          <li>DAO governance participation</li>
+          <li>Transport layer diagnostics</li>
+          <li>Access to all sovereign modules</li>
+        </ul>
+        <div class="app-launch">Launch Genesis Node</div>
+      </a>
+
+      <a href="apps/forge/index.html" class="app-card forge">
+        <span class="app-icon">◈</span>
+        <div class="app-name">Forge Platform</div>
+        <div class="app-subtitle">apps/forge</div>
+        <div class="app-desc">
+          The community and creator hub. Hosts the social feed, public square,
+          AI-assisted app studio, and the sovereign marketplace — all in one shell.
+        </div>
+        <ul class="app-features">
+          <li>Public Square — channels, DMs, community feed</li>
+          <li>AI Studio — build and publish sovereign apps</li>
+          <li>Marketplace — discover and monetize apps</li>
+          <li>Self-custodial wallet and payments</li>
+          <li>Full account and security management</li>
+        </ul>
+        <div class="app-launch">Open Forge</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── REPOS ──────────────────────────────────────────────────────── -->
+  <section id="repos" class="section" style="padding-top:0">
+    <div class="section-label">Repository Structure</div>
+    <div class="section-title">Monorepo — 12 packages + 2 apps</div>
+    <div class="section-desc">
+      Each package is independently versioned with its own README. Apps consume packages
+      as dependencies. The load order is fixed — see the Stack section below.
+    </div>
+
+    <div class="repos-grid">
+      <a href="sovereign-sdk/README.md" class="repo-card">
+        <span class="repo-tag core">Core</span>
+        <div class="repo-name">sovereign-sdk</div>
+        <div class="repo-desc">Cryptographic primitives — security utils + GF(256) Shamir SSS. No dependencies. Load first.</div>
+      </a>
+      <a href="sovereign-kernel/README.md" class="repo-card">
+        <span class="repo-tag core">Core</span>
+        <div class="repo-name">sovereign-kernel</div>
+        <div class="repo-desc">FSM state machine (12 machines, 12 invariants), OS kernel, and service worker security kernel.</div>
+      </a>
+      <a href="sovereign-runtime/README.md" class="repo-card">
+        <span class="repo-tag runtime">Runtime</span>
+        <div class="repo-name">sovereign-runtime</div>
+        <div class="repo-desc">Transport layer v4.0 — WebRTC + MQTT, multi-relay failover, CRDT sync, peer reputation, ACK delivery.</div>
+      </a>
+      <a href="sovereign-identity/README.md" class="repo-card">
+        <span class="repo-tag core">Identity</span>
+        <div class="repo-name">sovereign-identity</div>
+        <div class="repo-desc">DID vault, W3C Verifiable Credentials, Shamir key recovery, key rotation, onboarding portal.</div>
+      </a>
+      <a href="sovereign-canonical/README.md" class="repo-card">
+        <span class="repo-tag runtime">Governance</span>
+        <div class="repo-name">sovereign-canonical</div>
+        <div class="repo-desc">DAO governance — proposals, voting, quorum, FSM-enforced consensus. Canonical truth for the mesh.</div>
+      </a>
+      <a href="sovereign-social/README.md" class="repo-card">
+        <span class="repo-tag social">Social</span>
+        <div class="repo-name">sovereign-social</div>
+        <div class="repo-desc">P2P encrypted messenger, 3-layer sovereign mail, and the Forge public square and channels.</div>
+      </a>
+      <a href="sovereign-wallet/README.md" class="repo-card">
+        <span class="repo-tag finance">Finance</span>
+        <div class="repo-name">sovereign-wallet</div>
+        <div class="repo-desc">Self-custodial wallet with AI-governed payment authorization. Private keys never leave the device.</div>
+      </a>
+      <a href="sovereign-receipts/README.md" class="repo-card">
+        <span class="repo-tag finance">Finance</span>
+        <div class="repo-name">sovereign-receipts</div>
+        <div class="repo-desc">Cryptographically signed transaction receipts and tamper-evident audit log.</div>
+      </a>
+      <a href="sovereign-explorer/README.md" class="repo-card">
+        <span class="repo-tag runtime">Network</span>
+        <div class="repo-name">sovereign-explorer</div>
+        <div class="repo-desc">Network search index, relay health hub, and cross-network identity bridge.</div>
+      </a>
+      <a href="sovereign-evaluator/README.md" class="repo-card">
+        <span class="repo-tag security">Security</span>
+        <div class="repo-name">sovereign-evaluator</div>
+        <div class="repo-desc">Adversarial security audit and threat simulation platform. Identity-bound access.</div>
+      </a>
+      <a href="sovereign-ai/README.md" class="repo-card">
+        <span class="repo-tag ai">AI</span>
+        <div class="repo-name">sovereign-ai</div>
+        <div class="repo-desc">AI Studio — build, publish, and monetize sovereign apps from the browser.</div>
+      </a>
+      <a href="sovereign-docs/README.md" class="repo-card">
+        <span class="repo-tag docs">Docs</span>
+        <div class="repo-name">sovereign-docs</div>
+        <div class="repo-desc">Canonical documentation, full changelog, security model comparison, and license.</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── STACK ──────────────────────────────────────────────────────── -->
+  <section id="stack" class="section" style="padding-top:0">
+    <div class="section-label">Architecture</div>
+    <div class="section-title">The Sovereign Stack</div>
+    <div class="section-desc">
+      Scripts must be loaded in dependency order. Each layer depends on everything below it.
+      The <code>index.js</code> entry point in each app handles service worker registration,
+      stack health checks, and the panic handler.
+    </div>
+
+    <div class="stack-diagram">
+      <div class="stack-layer">
+        <div class="stack-number">L0</div>
+        <div class="stack-badge" style="background:rgba(0,232,124,.10);color:var(--green)">Cryptographic</div>
+        <div class="stack-modules">
+          <span class="stack-chip">sovereign_shamir.js</span>
+          <span class="stack-chip">sovereign_security.js</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number"></div>
+        <div style="padding-left:68px;font-size:9px;color:var(--dim)">↓ depends on L0</div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number">L1</div>
+        <div class="stack-badge" style="background:rgba(0,232,124,.08);color:var(--green)">State Machine</div>
+        <div class="stack-modules">
+          <span class="stack-chip">sovereign_fsm.js</span>
+          <span class="stack-chip">genesis_sw.js (SW)</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number"></div>
+        <div style="padding-left:68px;font-size:9px;color:var(--dim)">↓ depends on L0–L1</div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number">L2</div>
+        <div class="stack-badge" style="background:rgba(0,200,255,.08);color:var(--cyan)">Transport</div>
+        <div class="stack-modules">
+          <span class="stack-chip">transport.js</span>
+          <span class="stack-chip" style="color:var(--dim)">WebRTC · MQTT · CRDT · DHT</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number"></div>
+        <div style="padding-left:68px;font-size:9px;color:var(--dim)">↓ depends on L0–L2</div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number">L3</div>
+        <div class="stack-badge" style="background:rgba(0,200,255,.06);color:var(--cyan)">OS Kernel</div>
+        <div class="stack-modules">
+          <span class="stack-chip">sovereign_kernel.js</span>
+          <span class="stack-chip" style="color:var(--dim)">process · authority · routing</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number"></div>
+        <div style="padding-left:68px;font-size:9px;color:var(--dim)">↓ app entry point</div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number">L4</div>
+        <div class="stack-badge" style="background:rgba(192,96,255,.08);color:var(--purple)">App Bootstrap</div>
+        <div class="stack-modules">
+          <span class="stack-chip">index.js</span>
+          <span class="stack-chip" style="color:var(--dim)">SW registration · health check · panic handler</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number"></div>
+        <div style="padding-left:68px;font-size:9px;color:var(--dim)">↓ application layer</div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-number">L5</div>
+        <div class="stack-badge" style="background:rgba(255,176,32,.08);color:var(--amber)">Application</div>
+        <div class="stack-modules">
+          <span class="stack-chip">Genesis Node</span>
+          <span class="stack-chip">Forge Platform</span>
+          <span class="stack-chip" style="color:var(--dim)">+ any sovereign app</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUICK START ────────────────────────────────────────────────── -->
+  <section id="quickstart" class="section" style="padding-top:0">
+    <div class="section-label">Quick Start</div>
+    <div class="section-title">Zero install. Open source. Yours.</div>
+    <div class="section-desc">
+      Sovereign runs entirely as static files. No build step required for local use.
+      Service Workers require HTTP — <code>file://</code> will not work.
+    </div>
+
+    <div class="qs-steps">
+      <div class="qs-step">
+        <div class="qs-num">1</div>
+        <div>
+          <div class="qs-step-title">Serve over HTTP</div>
+          <div class="qs-step-body">
+            Service Workers require a real HTTP origin.<br>
+            <code>npx serve .</code> &nbsp;or&nbsp; <code>python3 -m http.server 8080</code>
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">2</div>
+        <div>
+          <div class="qs-step-title">Open Genesis Node</div>
+          <div class="qs-step-body">
+            Navigate to <code>apps/genesis/index.html</code>.
+            The boot screen will verify each layer of the stack as it loads.
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">3</div>
+        <div>
+          <div class="qs-step-title">Create your identity</div>
+          <div class="qs-step-body">
+            Click <strong>Generate Identity</strong> and set a strong passphrase.
+            Your ECDSA P-256 key pair is generated in a Web Worker and encrypted with AES-256-GCM.
+            The private key never exists in the main tab.
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">4</div>
+        <div>
+          <div class="qs-step-title">Back up your recovery shares</div>
+          <div class="qs-step-body">
+            Go to <strong>Identity Vault</strong> → <strong>Key Recovery</strong>.
+            Export or print your 3-of-5 Shamir shares. Store them in separate physical locations.
+            Without them, a forgotten passphrase means a lost identity.
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">5</div>
+        <div>
+          <div class="qs-step-title">Connect to peers</div>
+          <div class="qs-step-body">
+            The transport layer connects to the public relay automatically.
+            Share your DID or QR code to invite peers to your mesh.
+            Use <strong>Forge</strong> to join the public square.
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">⚡</div>
+        <div>
+          <div class="qs-step-title">Panic shortcut</div>
+          <div class="qs-step-body">
+            Press <code>Ctrl+Shift+P</code> at any time to immediately lock the vault
+            and suspend mesh presence. No confirmation required.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-brand" href="/">
+        <svg viewBox="0 0 52 60" fill="none">
+          <path d="M26 2 L50 15 L50 45 L26 58 L2 45 L2 15 Z" stroke="#00e87c" stroke-width="1.5" fill="none"/>
+        </svg>
+        SOVEREIGN OS
+      </a>
+      <div class="footer-tagline">
+        © James Chapman (XheCarpenXer) · iconoclastdao@gmail.com
+      </div>
+      <div class="footer-links">
+        <a href="sovereign-docs/README.md">Docs</a>
+        <a href="sovereign-docs/LICENSE.md">License</a>
+        <a href="apps/genesis/index.html">Genesis</a>
+        <a href="apps/forge/index.html">Forge</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

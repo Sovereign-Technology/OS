@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⬡ SOVEREIGN OS — Genesis Node</title>
-  <meta name="description" content="Self-sovereign, peer-to-peer operating environment. No servers. No surveillance." />
+  <title>⬡ SOVEREIGN — Forge Platform</title>
+  <meta name="description" content="Sovereign Forge — social, studio, and marketplace. Build and publish sovereign apps." />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; connect-src 'self' wss://sovereign-relay.fly.dev ws: wss:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline';" />
+        content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
+                 font-src 'self'; connect-src 'self' http://localhost:11434 ws: wss: https:;
+                 img-src 'self' data: blob:;" />
   <style>
     :root {
       --bg-void:#030306; --bg-surface:#070a0f; --bg-raised:#0c1018; --bg-panel:#101620;
@@ -26,19 +28,20 @@
 
     #sovereign-boot { position:fixed; inset:0; display:flex; flex-direction:column;
                       align-items:center; justify-content:center; gap:20px;
-                      background:var(--bg-void); z-index:9998; transition:opacity 0.4s ease; }
+                      background:var(--bg-void); z-index:9998; transition:opacity .4s ease; }
     #sovereign-boot.hidden { opacity:0; pointer-events:none; }
     .boot-hex { width:52px; height:52px; animation:boot-pulse 1.8s ease-in-out infinite;
-                filter:drop-shadow(0 0 18px rgba(0,232,124,0.5)); }
+                filter:drop-shadow(0 0 18px rgba(0,200,255,0.5)); }
     @keyframes boot-pulse { 0%,100%{opacity:.6;transform:scale(.97)} 50%{opacity:1;transform:scale(1.03)} }
     .boot-title { font-family:var(--font-display); font-size:18px; font-weight:800;
-                  color:var(--accent-green); letter-spacing:.12em; }
+                  color:var(--accent-cyan); letter-spacing:.12em; }
+    .boot-subtitle { font-size:9px; color:var(--text-muted); letter-spacing:.2em; text-transform:uppercase; }
     .boot-log { font-size:10px; color:var(--text-muted); letter-spacing:.06em; height:14px; transition:color .2s; }
-    .boot-log.ok { color:var(--accent-green); }
+    .boot-log.ok { color:var(--accent-cyan); }
     .boot-log.error { color:var(--accent-red); }
-    .boot-bar-track { width:200px; height:2px; background:rgba(0,232,124,.12); border-radius:2px; overflow:hidden; }
-    .boot-bar-fill { height:100%; background:var(--accent-green); border-radius:2px; width:0%;
-                     transition:width .3s ease; box-shadow:0 0 8px rgba(0,232,124,.6); }
+    .boot-bar-track { width:200px; height:2px; background:rgba(0,200,255,.12); border-radius:2px; overflow:hidden; }
+    .boot-bar-fill { height:100%; background:var(--accent-cyan); border-radius:2px; width:0%;
+                     transition:width .3s ease; box-shadow:0 0 8px rgba(0,200,255,.6); }
     #sovereign-app { width:100%; height:100%; }
   </style>
 </head>
@@ -47,11 +50,12 @@
   <!-- Boot screen -->
   <div id="sovereign-boot" role="status" aria-live="polite">
     <svg class="boot-hex" viewBox="0 0 52 60" fill="none">
-      <path d="M26 2 L50 15 L50 45 L26 58 L2 45 L2 15 Z" stroke="#00e87c" stroke-width="1.5" fill="none" opacity=".4"/>
-      <path d="M26 10 L44 20 L44 40 L26 50 L8 40 L8 20 Z" stroke="#00e87c" stroke-width="1" fill="none" opacity=".6"/>
-      <path d="M26 18 L38 25 L38 35 L26 42 L14 35 L14 25 Z" fill="rgba(0,232,124,.15)" stroke="#00e87c" stroke-width="1.5"/>
+      <path d="M26 2 L50 15 L50 45 L26 58 L2 45 L2 15 Z" stroke="#00c8ff" stroke-width="1.5" fill="none" opacity=".4"/>
+      <path d="M26 10 L44 20 L44 40 L26 50 L8 40 L8 20 Z" stroke="#00c8ff" stroke-width="1" fill="none" opacity=".6"/>
+      <path d="M26 18 L38 25 L38 35 L26 42 L14 35 L14 25 Z" fill="rgba(0,200,255,.15)" stroke="#00c8ff" stroke-width="1.5"/>
     </svg>
-    <div class="boot-title">SOVEREIGN OS</div>
+    <div class="boot-title">FORGE</div>
+    <div class="boot-subtitle">Sovereign Platform</div>
     <div class="boot-bar-track"><div class="boot-bar-fill" id="boot-bar"></div></div>
     <div class="boot-log" id="boot-log">Initializing sovereign stack…</div>
   </div>
@@ -61,17 +65,13 @@
 
   <!--
     SOVEREIGN STACK — strict load order, do not reorder
-    Layer 0: Cryptographic primitives (no deps)
-    Layer 1: FSM state machine kernel
-    Layer 2: Transport layer (WebRTC + MQTT + CRDT)
-    Layer 3: OS kernel (process, authority, routing)
-    Layer 4: App entry point (SW registration, health check, panic handler)
+    Forge uses the full stack minus sovereign_kernel.js (optional — add if
+    OS-level authority routing is needed for advanced marketplace features).
   -->
   <script src="../../sovereign-sdk/src/sovereign_shamir.js"></script>
   <script src="../../sovereign-sdk/src/sovereign_security.js"></script>
   <script src="../../sovereign-kernel/src/sovereign_fsm.js"></script>
   <script src="../../sovereign-runtime/src/transport.js"></script>
-  <script src="../../sovereign-kernel/src/sovereign_kernel.js"></script>
   <script src="./index.js"></script>
 
   <!-- Boot sequence -->
@@ -81,11 +81,10 @@
       const log = document.getElementById('boot-log');
       const boot = document.getElementById('sovereign-boot');
       const steps = [
-        { pct:20,  msg:'✓ SDK loaded',        check:()=>typeof window.sanitize!=='undefined' },
-        { pct:40,  msg:'✓ FSM kernel ready',  check:()=>typeof window.SovereignFSM!=='undefined' },
-        { pct:60,  msg:'✓ Transport ready',   check:()=>typeof window.SovereignTransport!=='undefined' },
-        { pct:80,  msg:'✓ OS kernel ready',   check:()=>typeof window.SovereignKernel!=='undefined' },
-        { pct:100, msg:'✓ Genesis Node online' },
+        { pct:25,  msg:'✓ SDK loaded',       check:()=>typeof window.sanitize!=='undefined' },
+        { pct:50,  msg:'✓ FSM kernel ready', check:()=>typeof window.SovereignFSM!=='undefined' },
+        { pct:75,  msg:'✓ Transport ready',  check:()=>typeof window.SovereignTransport!=='undefined' },
+        { pct:100, msg:'✓ Forge online' },
       ];
       let i = 0;
       const tick = () => {
