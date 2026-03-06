@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/kernel",
+  "version": "1.0.0",
+  "description": "Sovereign OS core kernel — FSM state machine, distributed kernel, and service worker security layer",
+  "main": "src/sovereign_kernel.js",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "kernel", "fsm", "p2p", "browser-os"],
+  "license": "MIT"
+}

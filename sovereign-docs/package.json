@@ -1,0 +1,8 @@
+{
+  "name": "@sovereign/docs",
+  "version": "1.0.0",
+  "description": "Official documentation for the Sovereign OS monorepo",
+  "private": true,
+  "keywords": ["sovereign", "docs", "documentation"],
+  "license": "MIT"
+}

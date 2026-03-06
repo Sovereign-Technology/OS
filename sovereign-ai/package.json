@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/ai",
+  "version": "1.0.0",
+  "description": "Sovereign AI Studio — build, publish, and monetize sovereign apps",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "ai", "studio", "apps", "builder", "marketplace"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@sovereign/sdk",
+  "version": "1.0.0",
+  "description": "Shared cryptographic primitives — security utilities and Shamir Secret Sharing",
+  "main": "src/sovereign_security.js",
+  "type": "module",
+  "exports": {
+    "./security": "./src/sovereign_security.js",
+    "./shamir": "./src/sovereign_shamir.js"
+  },
+  "files": ["src/"],
+  "keywords": ["sovereign", "crypto", "shamir", "security", "gf256"],
+  "license": "MIT"
+}

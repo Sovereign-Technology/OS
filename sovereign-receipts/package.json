@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/receipts",
+  "version": "1.0.0",
+  "description": "Immutable transaction receipts and audit log for Sovereign Finance",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "receipts", "transactions", "audit", "history"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

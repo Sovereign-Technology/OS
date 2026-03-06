@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/canonical",
+  "version": "1.0.0",
+  "description": "DAO governance — proposals, voting, quorum, and distributed consensus",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "dao", "governance", "voting", "consensus"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

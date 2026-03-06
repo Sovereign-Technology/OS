@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/evaluator",
+  "version": "1.0.0",
+  "description": "Adversarial security evaluation and audit platform",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "security", "audit", "adversarial", "pentest"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

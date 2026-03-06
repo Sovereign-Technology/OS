@@ -1,0 +1,17 @@
+{
+  "name": "@sovereign-apps/genesis",
+  "version": "1.0.0",
+  "description": "Genesis Node — Sovereign OS primary entry point",
+  "private": true,
+  "dependencies": {
+    "@sovereign/sdk": "*",
+    "@sovereign/kernel": "*",
+    "@sovereign/runtime": "*",
+    "@sovereign/identity": "*",
+    "@sovereign/canonical": "*",
+    "@sovereign/social": "*",
+    "@sovereign/wallet": "*",
+    "@sovereign/explorer": "*"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "sovereign-os",
+  "version": "7.0.0",
+  "private": true,
+  "description": "Sovereign OS — self-sovereign, peer-to-peer operating environment for the browser",
+  "workspaces": [
+    "sovereign-kernel",
+    "sovereign-identity",
+    "sovereign-canonical",
+    "sovereign-evaluator",
+    "sovereign-runtime",
+    "sovereign-receipts",
+    "sovereign-explorer",
+    "sovereign-social",
+    "sovereign-wallet",
+    "sovereign-ai",
+    "sovereign-sdk",
+    "sovereign-docs",
+    "apps/genesis",
+    "apps/forge"
+  ],
+  "license": "MIT",
+  "author": "James Chapman (XheCarpenXer) <iconoclastdao@gmail.com>"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/social",
+  "version": "1.0.0",
+  "description": "P2P encrypted social layer — messenger, layered mail, and public square",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "social", "messenger", "mail", "p2p", "encrypted"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*", "@sovereign/runtime": "*" },
+  "license": "MIT"
+}

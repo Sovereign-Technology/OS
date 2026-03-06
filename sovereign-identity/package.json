@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/identity",
+  "version": "1.0.0",
+  "description": "Decentralized identity vault — DIDs, W3C Verifiable Credentials, key recovery",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "did", "identity", "verifiable-credentials", "key-recovery"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

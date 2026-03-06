@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/explorer",
+  "version": "1.0.0",
+  "description": "Network explorer — search, relay management, and cross-network bridge",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "explorer", "search", "relay", "bridge", "network"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*", "@sovereign/runtime": "*" },
+  "license": "MIT"
+}

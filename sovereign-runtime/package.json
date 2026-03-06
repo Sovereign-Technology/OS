@@ -1,0 +1,10 @@
+{
+  "name": "@sovereign/runtime",
+  "version": "1.0.0",
+  "description": "Sovereign OS runtime — transport layer, peer mesh, and authority stack UI",
+  "type": "module",
+  "files": ["src/"],
+  "keywords": ["sovereign", "runtime", "transport", "webrtc", "p2p", "crdt"],
+  "peerDependencies": { "@sovereign/sdk": "*", "@sovereign/kernel": "*" },
+  "license": "MIT"
+}

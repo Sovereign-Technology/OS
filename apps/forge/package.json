@@ -1,0 +1,16 @@
+{
+  "name": "@sovereign-apps/forge",
+  "version": "1.0.0",
+  "description": "Forge Platform — social, studio, and marketplace app",
+  "private": true,
+  "dependencies": {
+    "@sovereign/sdk": "*",
+    "@sovereign/kernel": "*",
+    "@sovereign/runtime": "*",
+    "@sovereign/identity": "*",
+    "@sovereign/social": "*",
+    "@sovereign/ai": "*",
+    "@sovereign/wallet": "*"
+  },
+  "license": "MIT"
+}
