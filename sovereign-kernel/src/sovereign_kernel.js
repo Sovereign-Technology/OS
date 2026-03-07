@@ -82,18 +82,38 @@
   // ── Channel ───────────────────────────────────────────────────────────────
   const bc = new BroadcastChannel(CHAN_NAME);
 
+  let _bcClosed = false;
+
   function bcast(type, pay = {}) {
-    bc.postMessage({
-      type, from: NODE_ID, joinTime: JOIN_TIME,
-      role: myRole, did: myDid, ...pay,
-    });
+    if (_bcClosed) return;
+    try {
+      bc.postMessage({
+        type, from: NODE_ID, joinTime: JOIN_TIME,
+        role: myRole, did: myDid, ...pay,
+      });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'InvalidStateError') {
+        _bcClosed = true; // channel was closed; silence further calls
+      } else {
+        throw e;
+      }
+    }
   }
 
   function ucast(to, type, pay = {}) {
-    bc.postMessage({
-      type, from: NODE_ID, to, joinTime: JOIN_TIME,
-      role: myRole, did: myDid, ...pay,
-    });
+    if (_bcClosed) return;
+    try {
+      bc.postMessage({
+        type, from: NODE_ID, to, joinTime: JOIN_TIME,
+        role: myRole, did: myDid, ...pay,
+      });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'InvalidStateError') {
+        _bcClosed = true;
+      } else {
+        throw e;
+      }
+    }
   }
 
   // ── Event Bus ─────────────────────────────────────────────────────────────
@@ -455,7 +475,7 @@
   }, 500);
 
   // ── Heartbeat ─────────────────────────────────────────────────────────────
-  setInterval(() => bcast(T.HEARTBEAT, { role: myRole }), HB_INTERVAL_MS);
+  const _hbTimer = setInterval(() => bcast(T.HEARTBEAT, { role: myRole }), HB_INTERVAL_MS);
 
   // ── Bootstrap ─────────────────────────────────────────────────────────────
   bcast(T.ANNOUNCE);
@@ -476,7 +496,9 @@
 
   // ── Cleanup ───────────────────────────────────────────────────────────────
   window.addEventListener('beforeunload', () => {
-    try { bcast(T.GOODBYE); } catch (_) {}
+    clearInterval(_hbTimer);
+    _bcClosed = true;
+    try { bc.postMessage({ type: T.GOODBYE, from: NODE_ID, joinTime: JOIN_TIME, role: myRole, did: myDid }); } catch (_) {}
     bc.close();
   });
 
